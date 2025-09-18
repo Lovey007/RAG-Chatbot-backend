@@ -5,13 +5,31 @@ const { getEmbedding } = require('./embedder');
 const vectorStore = require('./vectorStore');
 
 async function fetchNews() {
-    // TODO: Replace with real news API fetch (e.g., GNews, NewsAPI)
-    // For now, this is a placeholder for demo purposes
-    return [
-        { id: 1, title: 'News 1', content: 'This is the first news article.' },
-        { id: 2, title: 'News 2', content: 'This is the second news article.' }
-    ];
+    const rssFeedUrl = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"; 
+    const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssFeedUrl)}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return data.items.slice(0, 5).map((item, index) => ({
+            id: index + 1,
+            title: item.title,
+            content: item.description || "No description available.",
+            url: item.link,
+            publishedAt: item.pubDate,
+            source: data.feed.title
+        }));
+    } catch (error) {
+        console.error("Error fetching RSS feed:", error);
+        return [];
+    }
 }
+
 
 async function ingest() {
     const articles = await fetchNews();
