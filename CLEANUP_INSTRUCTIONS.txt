@@ -1,0 +1,5 @@
+You can safely delete the following files, as they are no longer needed for production:
+- list_models.js (Gemini model listing utility)
+- gemini_models_output.txt (Gemini model output log)
+
+All other files are required for your backend to function.
