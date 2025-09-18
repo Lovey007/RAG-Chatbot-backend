@@ -1,2 +1,0 @@
-list_models.js
-gemini_models_output.txt
